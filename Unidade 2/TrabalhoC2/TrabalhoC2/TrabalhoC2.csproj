@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Aplicação WPF (Windows Presentation Foundation) em .NET 8 - compatível com o Visual Studio 2022 -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>TrabalhoC2</RootNamespace>
+  </PropertyGroup>
+
+  <!-- Imagem da textura do chão embutida no executável (acessada pelo XAML) -->
+  <ItemGroup>
+    <Resource Include="Texturas\granito.png" />
+  </ItemGroup>
+
+</Project>

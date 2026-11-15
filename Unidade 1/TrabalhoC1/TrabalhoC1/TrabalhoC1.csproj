@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Aplicação WPF (Windows Presentation Foundation) em .NET 8 - compatível com o Visual Studio 2022 -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>TrabalhoC1</RootNamespace>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,24 @@
+# O repositório guarda só os trabalhos C1, C2 e C3.
+# O resto da pasta da disciplina (PDFs, aulas, vídeos didáticos) fica fora.
+/*
+!/.gitignore
+!/README.md
+!/Unidade 1/
+!/Unidade 2/
+!/Unidade 3/
+/Unidade 1/*
+/Unidade 2/*
+/Unidade 3/*
+!/Unidade 1/TrabalhoC1/
+!/Unidade 2/TrabalhoC2/
+!/Unidade 3/TrabalhoC3/
+
+# Saídas de compilação e arquivos locais do Visual Studio
+bin/
+obj/
+.vs/
+*.user
+*.suo
+
+# Vídeos explicativos (pesados; ficam só na pasta local)
+*.mp4

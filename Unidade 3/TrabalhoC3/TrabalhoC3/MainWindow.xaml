@@ -1,0 +1,64 @@
+<!--
+    TRABALHO C3 - PROCESSAMENTO DE IMAGENS
+    Modelagem hierárquica 3D: quatro instâncias de um camelo articulado
+    (7 juntas animadas) caminhando em círculo sobre um deserto.
+
+    Aqui ficam a câmera, as luzes e o material do deserto. O modelo
+    hierárquico do camelo é montado em ModeloCamelo.cs e as instâncias /
+    animações em MainWindow.xaml.cs.
+-->
+<Window x:Class="TrabalhoC3.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Trabalho C3 - Caravana de Camelos (Modelo Hierárquico 3D)"
+        Width="1100" Height="720"
+        WindowStartupLocation="CenterScreen"
+        Background="#E8C99A">
+
+    <Grid>
+        <Viewport3D>
+
+            <!-- ============================ CÂMERA ============================
+                 Perspectiva, elevada e afastada, mirando o centro do círculo
+                 percorrido pelos camelos (ponto 0,2,0). -->
+            <Viewport3D.Camera>
+                <PerspectiveCamera Position="0,13,24" LookDirection="0,-11,-24" UpDirection="0,1,0"
+                                   FieldOfView="55" NearPlaneDistance="0.1" FarPlaneDistance="1000"/>
+            </Viewport3D.Camera>
+
+            <!-- ============================= LUZES ============================
+                 Mistura de luz ambiente (ilumina tudo por igual, evitando faces
+                 totalmente pretas) com uma luz direcional (o "sol", que cria o
+                 sombreamento entre as faces). -->
+            <ModelVisual3D>
+                <ModelVisual3D.Content>
+                    <Model3DGroup>
+                        <AmbientLight Color="#5A5A5A"/>
+                        <DirectionalLight Color="#C8C8C8" Direction="-0.4,-1,-0.5"/>
+                    </Model3DGroup>
+                </ModelVisual3D.Content>
+            </ModelVisual3D>
+
+            <!-- ============================ DESERTO ===========================
+                 Plano subdividido em ladrilhos, cada um com a imagem de areia
+                 inteira (textura repetida). A malha é criada no code-behind. -->
+            <ModelVisual3D>
+                <ModelVisual3D.Content>
+                    <GeometryModel3D x:Name="deserto">
+                        <GeometryModel3D.Material>
+                            <DiffuseMaterial>
+                                <DiffuseMaterial.Brush>
+                                    <ImageBrush ImageSource="Texturas/areia.jpg"/>
+                                </DiffuseMaterial.Brush>
+                            </DiffuseMaterial>
+                        </GeometryModel3D.Material>
+                    </GeometryModel3D>
+                </ModelVisual3D.Content>
+            </ModelVisual3D>
+
+            <!-- ====================== CARAVANA DE CAMELOS ======================
+                 Conteúdo (as 4 instâncias do camelo) atribuído no code-behind. -->
+            <ModelVisual3D x:Name="caravana"/>
+        </Viewport3D>
+    </Grid>
+</Window>
