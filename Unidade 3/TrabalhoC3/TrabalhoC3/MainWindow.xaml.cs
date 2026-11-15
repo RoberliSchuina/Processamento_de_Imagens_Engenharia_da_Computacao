@@ -15,8 +15,13 @@ public partial class MainWindow : Window
     private const double PeriodoPassada = 1.6;  // duração de um ciclo de passos (s)
     private const double AmplitudeQuadril = 16; // abertura máxima das pernas (graus)
 
+    /// <summary>
+    /// Construtor: carrega o XAML, cria o chão do deserto, monta a caravana com as
+    /// quatro instâncias do camelo e inicia o giro da caravana em torno do eixo Y.
+    /// </summary>
     public MainWindow()
     {
+        // Cria os elementos declarados em MainWindow.xaml (câmera, luzes, deserto, caravana)
         InitializeComponent();
 
         // Deserto de 400 x 400 com ladrilhos de 12 x 12 (textura de areia repetida ~34 x 34 vezes),
@@ -35,16 +40,19 @@ public partial class MainWindow : Window
 
         for (int i = 0; i < QuantidadeCamelos; i++)
         {
+            // Transformação da instância i: 1º translada até a borda; 2º gira i x 90° em torno de Y
             var transformacaoInstancia = new Transform3DGroup();
             transformacaoInstancia.Children.Add(new TranslateTransform3D(0, 0, RaioCirculo));
             transformacaoInstancia.Children.Add(new RotateTransform3D(
                 new AxisAngleRotation3D(new Vector3D(0, 1, 0), i * 360.0 / QuantidadeCamelos)));
 
+            // Invólucro com a transformação acima, pendurado no grupo da caravana
             var instancia = new Model3DGroup { Transform = transformacaoInstancia };
             instancia.Children.Add(modelo.Camelo); // mesmo modelo compartilhado pelas 4 instâncias
             grupoCaravana.Children.Add(instancia);
         }
 
+        // Exibe a caravana no ModelVisual3D "caravana" declarado no XAML
         caravana.Content = grupoCaravana;
 
         // Deslocamento em círculo: o grupo inteiro gira em torno do eixo Y. Girando no
@@ -55,8 +63,11 @@ public partial class MainWindow : Window
         // vai de +a até -a e recua 2·L·sen(a) em relação ao corpo.
         double velocidade = 2 * ModeloCamelo.AlturaQuadril * Math.Sin(AmplitudeQuadril * Math.PI / 180)
                             / (PeriodoPassada / 2);
+
+        // Tempo de uma volta completa = perímetro do círculo / velocidade
         double tempoVolta = 2 * Math.PI * RaioCirculo / velocidade;
 
+        // Gira a caravana de 0° a 360° em velocidade constante, para sempre
         rotacaoCaravana.BeginAnimation(AxisAngleRotation3D.AngleProperty,
             new DoubleAnimation(0, 360, TimeSpan.FromSeconds(tempoVolta)) { RepeatBehavior = RepeatBehavior.Forever });
     }

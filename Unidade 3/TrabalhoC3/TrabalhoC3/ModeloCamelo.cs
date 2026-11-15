@@ -52,6 +52,10 @@ public class ModeloCamelo
     /// <summary>Raiz da hierarquia: o elemento agrupador final "Camel".</summary>
     public Model3DGroup Camelo { get; }
 
+    /// <summary>
+    /// Construtor: cria os primitivos e os encaixa no grafo hierárquico
+    /// (primitivos → Lower leg → Left/Right leg → Camel).
+    /// </summary>
     public ModeloCamelo()
     {
         // ================= 1) PRIMITIVOS =================
@@ -99,6 +103,7 @@ public class ModeloCamelo
     /// <param name="amplitudeQuadril">Ângulo máximo, em graus, que a perna avança ou recua.</param>
     public void IniciarAnimacao(double periodo, double amplitudeQuadril)
     {
+        // Duração de um ciclo e amplitude (nome curto) usadas em todos os quadros-chave
         var ciclo = TimeSpan.FromSeconds(periodo);
         double a = amplitudeQuadril;
 
@@ -110,6 +115,7 @@ public class ModeloCamelo
         var quadrilEsquerdo = QuadrosChave(ciclo, (0, -a, false), (0.5, a, true), (1, -a, false));
         var quadrilDireito = QuadrosChave(ciclo, (0, a, false), (0.5, -a, false), (1, a, true));
 
+        // Andadura: dianteira e traseira do MESMO lado recebem a mesma animação
         QuadrilDianteiroEsquerdo.BeginAnimation(AxisAngleRotation3D.AngleProperty, quadrilEsquerdo);
         QuadrilTraseiroEsquerdo.BeginAnimation(AxisAngleRotation3D.AngleProperty, quadrilEsquerdo);
         QuadrilDianteiroDireito.BeginAnimation(AxisAngleRotation3D.AngleProperty, quadrilDireito);
@@ -129,12 +135,16 @@ public class ModeloCamelo
 
     // ===================== Auxiliares da hierarquia =====================
 
+    /// <summary>Nova junta: rotação em torno do eixo Z local, começando em 0°.</summary>
     private static AxisAngleRotation3D NovaJunta() => new(new Vector3D(0, 0, 1), 0);
 
     /// <summary>Primitivo = geometria (MeshGeometry3D) + material de cor sólida.</summary>
     private static GeometryModel3D Primitivo(MeshGeometry3D malha, string cor)
     {
+        // Material difuso com a cor informada em hexadecimal (ex.: "#B08355")
         var material = new DiffuseMaterial(new SolidColorBrush((Color)ColorConverter.ConvertFromString(cor)));
+
+        // A malha não muda mais: congelá-la evita cópias ao compartilhá-la entre instâncias
         malha.Freeze();
         return new GeometryModel3D(malha, material);
     }
@@ -142,6 +152,7 @@ public class ModeloCamelo
     /// <summary>Agrupador: junta vários nós (instâncias) num único modelo.</summary>
     private static Model3DGroup Grupo(params Model3D[] filhos)
     {
+        // Grupo vazio que recebe cada filho na ordem informada
         var grupo = new Model3DGroup();
         foreach (Model3D filho in filhos)
             grupo.Children.Add(filho);
@@ -154,6 +165,7 @@ public class ModeloCamelo
     /// </summary>
     private static Model3DGroup Instancia(Model3D modelo, Transform3D transformacao)
     {
+        // O invólucro guarda a transformação; o filho é o modelo compartilhado (não é copiado)
         var instancia = new Model3DGroup { Transform = transformacao };
         instancia.Children.Add(modelo);
         return instancia;
@@ -166,6 +178,7 @@ public class ModeloCamelo
     /// </summary>
     private static Transform3DGroup Junta(AxisAngleRotation3D rotacao, double x, double y, double z)
     {
+        // No Transform3DGroup os filhos são aplicados em sequência: rotação e depois translação
         var grupo = new Transform3DGroup();
         grupo.Children.Add(new RotateTransform3D(rotacao));
         grupo.Children.Add(new TranslateTransform3D(x, y, z));
@@ -176,7 +189,10 @@ public class ModeloCamelo
     private static DoubleAnimationUsingKeyFrames QuadrosChave(TimeSpan ciclo,
         params (double fracao, double angulo, bool suave)[] quadros)
     {
+        // Animação com a duração de um ciclo, repetida indefinidamente
         var animacao = new DoubleAnimationUsingKeyFrames { Duration = ciclo, RepeatBehavior = RepeatBehavior.Forever };
+
+        // Cada quadro: instante = fração do ciclo; "suave" usa curva seno, senão interpolação linear
         foreach (var (fracao, angulo, suave) in quadros)
         {
             KeyTime instante = KeyTime.FromPercent(fracao);
@@ -194,6 +210,7 @@ public class ModeloCamelo
     /// <summary>Thigh: afunila do quadril (em cima) até o joelho (em baixo).</summary>
     private static MeshGeometry3D CriarCoxa()
     {
+        // Tronco: base estreita no joelho (y = -ComprimentoCoxa), topo largo um pouco acima do quadril
         var m = new MeshGeometry3D();
         Malhas.AdicionarTronco(m, new Point3D(0, -ComprimentoCoxa, 0), 0.26, 0.26,
                                   new Point3D(0, 0.15, 0), 0.46, 0.36);
@@ -203,9 +220,12 @@ public class ModeloCamelo
     /// <summary>Shin: do joelho até o tornozelo, com uma pequena "rótula" no topo.</summary>
     private static MeshGeometry3D CriarCanela()
     {
+        // Canela afunilada: do joelho (y = 0) até o tornozelo (y = -ComprimentoCanela)
         var m = new MeshGeometry3D();
         Malhas.AdicionarTronco(m, new Point3D(0, -ComprimentoCanela, 0), 0.17, 0.17,
                                   new Point3D(0, 0, 0), 0.24, 0.24);
+
+        // Rótula: cubo pequeno em volta da articulação, disfarçando a emenda com a coxa
         Malhas.AdicionarCaixa(m, new Point3D(-0.15, -0.15, -0.15), new Point3D(0.15, 0.1, 0.15));
         return m;
     }
@@ -213,6 +233,7 @@ public class ModeloCamelo
     /// <summary>Foot: almofada larga e achatada, um pouco projetada para a frente.</summary>
     private static MeshGeometry3D CriarPe()
     {
+        // Caixa achatada abaixo do tornozelo, avançando mais para +X (frente) que para trás
         var m = new MeshGeometry3D();
         Malhas.AdicionarCaixa(m, new Point3D(-0.2, -AlturaPe, -0.2), new Point3D(0.32, 0, 0.2));
         return m;
@@ -221,6 +242,7 @@ public class ModeloCamelo
     /// <summary>Torso: corpo + corcova + cauda (origem no centro do corpo).</summary>
     private static MeshGeometry3D CriarTorso()
     {
+        // Três peças na mesma malha (um único primitivo)
         var m = new MeshGeometry3D();
         Malhas.AdicionarCaixa(m, new Point3D(-1.6, -0.55, -0.6), new Point3D(1.6, 0.55, 0.6));      // corpo
         Malhas.AdicionarTronco(m, new Point3D(-0.1, 0.55, 0), 1.6, 1.0,
@@ -232,6 +254,7 @@ public class ModeloCamelo
     /// <summary>Head: pescoço inclinado para a frente + cabeça + focinho + orelhas (origem na base do pescoço).</summary>
     private static MeshGeometry3D CriarCabeca()
     {
+        // Cinco peças na mesma malha; a junta do pescoço gira todas juntas
         var m = new MeshGeometry3D();
         Malhas.AdicionarTronco(m, new Point3D(0, 0, 0), 0.55, 0.4,
                                   new Point3D(0.75, 1.35, 0), 0.32, 0.28);                        // pescoço

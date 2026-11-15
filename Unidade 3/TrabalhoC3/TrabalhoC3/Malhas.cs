@@ -19,13 +19,16 @@ public static class Malhas
     /// </summary>
     public static void AdicionarQuad(MeshGeometry3D malha, Point3D a, Point3D b, Point3D c, Point3D d)
     {
+        // Índice do primeiro vértice novo (a malha pode já conter outras faces)
         int i = malha.Positions.Count;
 
+        // Vértices próprios desta face (não compartilhados com as vizinhas)
         malha.Positions.Add(a);
         malha.Positions.Add(b);
         malha.Positions.Add(c);
         malha.Positions.Add(d);
 
+        // Uma coordenada de textura por vértice, na mesma ordem das posições
         malha.TextureCoordinates.Add(new Point(0, 1));
         malha.TextureCoordinates.Add(new Point(1, 1));
         malha.TextureCoordinates.Add(new Point(1, 0));
@@ -46,6 +49,8 @@ public static class Malhas
     /// </summary>
     public static void AdicionarHexaedro(MeshGeometry3D malha, Point3D[] baixo, Point3D[] cima)
     {
+        // 4 faces laterais ligam cada aresta de baixo à de cima; depois topo e base.
+        // Ordem dos vértices: anti-horária vista de fora.
         AdicionarQuad(malha, baixo[3], baixo[2], cima[2], cima[3]); // frente   (+Z)
         AdicionarQuad(malha, baixo[1], baixo[0], cima[0], cima[1]); // fundos   (-Z)
         AdicionarQuad(malha, baixo[2], baixo[1], cima[1], cima[2]); // direita  (+X)
@@ -57,6 +62,7 @@ public static class Malhas
     /// <summary>Adiciona uma caixa alinhada aos eixos, do canto mínimo ao canto máximo.</summary>
     public static void AdicionarCaixa(MeshGeometry3D malha, Point3D min, Point3D max)
     {
+        // Caixa = hexaedro com retângulos iguais na altura mínima (baixo) e máxima (cima)
         AdicionarHexaedro(malha,
             Retangulo(min.X, max.X, min.Y, min.Z, max.Z),
             Retangulo(min.X, max.X, max.Y, min.Z, max.Z));
@@ -71,6 +77,7 @@ public static class Malhas
                                        Point3D centroBaixo, double larguraXBaixo, double larguraZBaixo,
                                        Point3D centroCima, double larguraXCima, double larguraZCima)
     {
+        // Cada retângulo é centrado no seu ponto, com meia largura para cada lado em X e em Z
         AdicionarHexaedro(malha,
             Retangulo(centroBaixo.X - larguraXBaixo / 2, centroBaixo.X + larguraXBaixo / 2, centroBaixo.Y,
                       centroBaixo.Z - larguraZBaixo / 2, centroBaixo.Z + larguraZBaixo / 2),
@@ -95,14 +102,17 @@ public static class Malhas
     /// </summary>
     public static MeshGeometry3D CriarPlanoLadrilhado(double tamanho, double ladrilho)
     {
+        // Ladrilhos por lado (arredondado para cima) e coordenada inicial que centraliza o plano na origem
         var malha = new MeshGeometry3D();
         int n = (int)Math.Ceiling(tamanho / ladrilho);
         double inicio = -n * ladrilho / 2;
 
+        // Percorre a grade n x n: i avança em X e j avança em Z
         for (int i = 0; i < n; i++)
         {
             for (int j = 0; j < n; j++)
             {
+                // Limites do ladrilho atual
                 double x0 = inicio + i * ladrilho, x1 = x0 + ladrilho;
                 double z0 = inicio + j * ladrilho, z1 = z0 + ladrilho;
 

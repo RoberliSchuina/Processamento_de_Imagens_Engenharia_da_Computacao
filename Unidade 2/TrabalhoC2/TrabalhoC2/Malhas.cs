@@ -20,13 +20,16 @@ public static class Malhas
     /// </summary>
     public static void AdicionarQuad(MeshGeometry3D malha, Point3D a, Point3D b, Point3D c, Point3D d)
     {
+        // Índice do primeiro vértice novo (a malha pode já conter outras faces)
         int i = malha.Positions.Count;
 
+        // Vértices próprios desta face (não compartilhados com as vizinhas)
         malha.Positions.Add(a);
         malha.Positions.Add(b);
         malha.Positions.Add(c);
         malha.Positions.Add(d);
 
+        // Uma coordenada de textura por vértice, na mesma ordem das posições
         malha.TextureCoordinates.Add(new Point(0, 1));
         malha.TextureCoordinates.Add(new Point(1, 1));
         malha.TextureCoordinates.Add(new Point(1, 0));
@@ -44,16 +47,20 @@ public static class Malhas
     /// <summary>Adiciona o triângulo a-b-c (anti-horário visto de fora).</summary>
     public static void AdicionarTriangulo(MeshGeometry3D malha, Point3D a, Point3D b, Point3D c)
     {
+        // Índice do primeiro vértice novo
         int i = malha.Positions.Count;
 
+        // Vértices próprios deste triângulo
         malha.Positions.Add(a);
         malha.Positions.Add(b);
         malha.Positions.Add(c);
 
+        // Textura: base (a, b) na parte de baixo da imagem e o vértice c no meio do topo
         malha.TextureCoordinates.Add(new Point(0, 1));
         malha.TextureCoordinates.Add(new Point(1, 1));
         malha.TextureCoordinates.Add(new Point(0.5, 0));
 
+        // Um único triângulo (a, b, c)
         malha.TriangleIndices.Add(i);
         malha.TriangleIndices.Add(i + 1);
         malha.TriangleIndices.Add(i + 2);
@@ -74,6 +81,7 @@ public static class Malhas
         var p111 = new Point3D(max.X, max.Y, max.Z);
         var p011 = new Point3D(min.X, max.Y, max.Z);
 
+        // As 6 faces, cada uma com os vértices em sentido anti-horário vistos de fora
         AdicionarQuad(malha, p001, p101, p111, p011); // frente   (+Z)
         AdicionarQuad(malha, p100, p000, p010, p110); // fundos   (-Z)
         AdicionarQuad(malha, p101, p100, p110, p111); // direita  (+X)
@@ -85,6 +93,7 @@ public static class Malhas
     /// <summary>Cria uma malha contendo uma única caixa.</summary>
     public static MeshGeometry3D CriarCaixa(Point3D min, Point3D max)
     {
+        // Malha nova, preenchida apenas com esta caixa
         var malha = new MeshGeometry3D();
         AdicionarCaixa(malha, min, max);
         return malha;
@@ -98,6 +107,7 @@ public static class Malhas
     public static MeshGeometry3D CriarTelhado(double xMin, double xMax, double zMin, double zMax,
                                               double yBase, double yCumeeira)
     {
+        // A cumeeira fica no meio da profundidade da casa
         double zMeio = (zMin + zMax) / 2;
 
         // Beirais (base do telhado) e extremidades da cumeeira
@@ -108,6 +118,7 @@ public static class Malhas
         var cumeEsq = new Point3D(xMin, yCumeeira, zMeio);
         var cumeDir = new Point3D(xMax, yCumeeira, zMeio);
 
+        // Faces do telhado (todas anti-horárias vistas de fora)
         var malha = new MeshGeometry3D();
         AdicionarQuad(malha, frenteEsq, frenteDir, cumeDir, cumeEsq);  // água da frente
         AdicionarQuad(malha, fundoDir, fundoEsq, cumeEsq, cumeDir);    // água dos fundos
@@ -128,14 +139,17 @@ public static class Malhas
     /// </summary>
     public static MeshGeometry3D CriarPlanoLadrilhado(double tamanho, double ladrilho)
     {
+        // Ladrilhos por lado (arredondado para cima) e coordenada inicial que centraliza o plano na origem
         var malha = new MeshGeometry3D();
         int n = (int)Math.Ceiling(tamanho / ladrilho);
         double inicio = -n * ladrilho / 2;
 
+        // Percorre a grade n x n: i avança em X e j avança em Z
         for (int i = 0; i < n; i++)
         {
             for (int j = 0; j < n; j++)
             {
+                // Limites do ladrilho atual
                 double x0 = inicio + i * ladrilho, x1 = x0 + ladrilho;
                 double z0 = inicio + j * ladrilho, z1 = z0 + ladrilho;
 

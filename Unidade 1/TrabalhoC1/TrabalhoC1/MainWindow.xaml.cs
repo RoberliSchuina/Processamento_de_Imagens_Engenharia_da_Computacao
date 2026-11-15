@@ -30,8 +30,13 @@ public partial class MainWindow : Window
     private const string CaminhoAcoplamentoAntiGiro = "(UIElement.RenderTransform).(TransformGroup.Children)[0].(RotateTransform.Angle)";
     private const string CaminhoAcoplamentoGiro = "(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)";
 
+    /// <summary>
+    /// Construtor: carrega o desenho do XAML e registra os eventos que iniciam a
+    /// Storyboard e atualizam a biela principal a cada quadro.
+    /// </summary>
     public MainWindow()
     {
+        // Cria os elementos declarados em MainWindow.xaml (pista, locomotiva, rodas, bielas...)
         InitializeComponent();
 
         // A distância percorrida depende da largura da janela: (re)inicia a
@@ -45,6 +50,8 @@ public partial class MainWindow : Window
         // Evento disparado uma vez por quadro, logo após o WPF atualizar as
         // animações; usado para posicionar a biela principal e a cruzeta.
         CompositionTarget.Rendering += AtualizarBielaPrincipal;
+
+        // Ao fechar a janela, remove o handler (o evento é estático e manteria a janela na memória)
         Closed += (_, _) => CompositionTarget.Rendering -= AtualizarBielaPrincipal;
     }
 
@@ -60,6 +67,7 @@ public partial class MainWindow : Window
         if (distancia < 1)
             return;
 
+        // Tempo de uma ida (tempo = distância / velocidade); a volta dura o mesmo (AutoReverse)
         var duracao = new Duration(TimeSpan.FromSeconds(distancia / Velocidade));
 
         // Rolamento sem deslizar: ao percorrer "d" pixels, uma roda de raio "r"
@@ -67,6 +75,7 @@ public partial class MainWindow : Window
         double giroMotriz = Graus(distancia / RaioRodaMotriz);
         double giroPequena = Graus(distancia / RaioRodaPequena);
 
+        // Storyboard que agrupa e sincroniza todas as animações abaixo
         var storyboard = new Storyboard
         {
             AutoReverse = true,                    // volta pelo mesmo caminho
@@ -99,12 +108,17 @@ public partial class MainWindow : Window
     private static void AdicionarAnimacao(Storyboard storyboard, DependencyObject alvo, string caminho,
                                           double valorFinal, Duration duracao)
     {
+        // Animação de 0 até o valor final, suavizada no início e no fim (EaseInOut)
         var animacao = new DoubleAnimation(0, valorFinal, duracao)
         {
             EasingFunction = new SineEase { EasingMode = EasingMode.EaseInOut }
         };
+
+        // Liga a animação ao elemento-alvo e à propriedade (caminho) que ela vai alterar
         Storyboard.SetTarget(animacao, alvo);
         Storyboard.SetTargetProperty(animacao, new PropertyPath(caminho));
+
+        // Inclui na Storyboard para que comece junto com as demais
         storyboard.Children.Add(animacao);
     }
 
@@ -137,7 +151,9 @@ public partial class MainWindow : Window
         transCruzeta.X = pinoX + dx;
     }
 
+    /// <summary>Converte radianos em graus (as transformações do WPF usam graus).</summary>
     private static double Graus(double radianos) => radianos * 180.0 / Math.PI;
 
+    /// <summary>Converte graus em radianos (as funções de Math usam radianos).</summary>
     private static double Radianos(double graus) => graus * Math.PI / 180.0;
 }

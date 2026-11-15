@@ -14,8 +14,13 @@ public partial class MainWindow : Window
     private const double AlturaCumeeira = 6; // ponto mais alto do telhado
     private const double Beiral = 0.5;       // quanto o telhado avança além das paredes
 
+    /// <summary>
+    /// Construtor: carrega o XAML e atribui a geometria de cada modelo da cena
+    /// (cômodos, telhado, porta, janelas e chão).
+    /// </summary>
     public MainWindow()
     {
+        // Cria os elementos declarados em MainWindow.xaml (câmera, luzes, materiais, animações)
         InitializeComponent();
 
         // Planta baixa (vista de cima). A frente da casa está voltada para +Z,
@@ -49,6 +54,7 @@ public partial class MainWindow : Window
     /// </summary>
     private static MeshGeometry3D CriarJanelas()
     {
+        // Espessura das placas e malha única que recebe todas as janelas
         const double e = 0.06;
         var malha = new MeshGeometry3D();
 
@@ -67,6 +73,7 @@ public partial class MainWindow : Window
         // Lateral esquerda (x = -7): sala
         Malhas.AdicionarCaixa(malha, new Point3D(-7 - e, 1.2, -0.7), new Point3D(-7, 2.2, 0.7));
 
+        // Uma só malha = um só GeometryModel3D com o material das janelas
         return malha;
     }
 }
