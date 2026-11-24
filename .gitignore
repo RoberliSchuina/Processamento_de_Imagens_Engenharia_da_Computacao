@@ -3,6 +3,7 @@
 /*
 !/.gitignore
 !/README.md
+!/midia/
 !/Unidade 1/
 !/Unidade 2/
 !/Unidade 3/
@@ -20,5 +21,6 @@ obj/
 *.user
 *.suo
 
-# Vídeos explicativos (pesados; ficam só na pasta local)
+# Vídeos (pesados): as apresentações e as animações em MP4 são publicadas na Release
+# "apresentacoes-finais" do GitHub; no repositório ficam só as animações em WebP (pasta midia/)
 *.mp4
