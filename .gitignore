@@ -14,6 +14,12 @@
 !/Unidade 2/TrabalhoC2/
 !/Unidade 3/TrabalhoC3/
 
+# Slides didáticos dos trabalhos: só os .pptx prontos (a pasta fonte/ do gerador fica fora)
+!/Apresentacoes_PPT/
+/Apresentacoes_PPT/*
+!/Apresentacoes_PPT/*.pptx
+~$*
+
 # Saídas de compilação e arquivos locais do Visual Studio
 bin/
 obj/
