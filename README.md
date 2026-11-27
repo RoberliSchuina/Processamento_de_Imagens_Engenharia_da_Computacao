@@ -40,6 +40,19 @@ porque passam do limite de 100 MB por arquivo do repositório.
 | **C2** | [TrabalhoC2_Apresentacao_Final.mp4](https://github.com/RoberliSchuina/Processamento_de_Imagens_Engenharia_da_Computacao/releases/download/apresentacoes-finais/TrabalhoC2_Apresentacao_Final.mp4) | 25:27 | 178 MB |
 | **C3** | [TrabalhoC3_Apresentacao_Final.mp4](https://github.com/RoberliSchuina/Processamento_de_Imagens_Engenharia_da_Computacao/releases/download/apresentacoes-finais/TrabalhoC3_Apresentacao_Final.mp4) | 29:47 | 148 MB |
 
+## Slides das apresentações
+
+Decks em PowerPoint que explicam, passo a passo, como o código de cada trabalho foi desenvolvido: trechos do
+código real, renders, diagramas, o esquema da hierarquia de tags do `MainWindow.xaml`, vídeos embutidos e
+animações por clique. O GitHub não mostra `.pptx` no navegador: baixe o arquivo e abra no PowerPoint em modo de
+apresentação (**F5**) para ver as animações. As notas do apresentador trazem o roteiro de cada slide.
+
+| Trabalho | Slides | Quantidade | Tamanho |
+|---|---|---|---|
+| **C1** | [TrabalhoC1_Apresentacao.pptx](Apresentacoes_PPT/TrabalhoC1_Apresentacao.pptx) | 45 slides | 9,5 MB |
+| **C2** | [TrabalhoC2_Apresentacao.pptx](Apresentacoes_PPT/TrabalhoC2_Apresentacao.pptx) | 47 slides | 21,8 MB |
+| **C3** | [TrabalhoC3_Apresentacao.pptx](Apresentacoes_PPT/TrabalhoC3_Apresentacao.pptx) | 47 slides | 20,7 MB |
+
 ## Como executar
 
 Requisitos: Windows e o .NET 8 (ou o Visual Studio 2022 com a carga de trabalho **Desenvolvimento para desktop com .NET**).
